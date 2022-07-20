@@ -1,20 +1,41 @@
+import React, { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { inject, Observer, observer, Provider } from 'mobx-react';
+import todosStore from './store/todosStore';
+import TodoScreen from './src/screens/TodoScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import ViewTodoList from './src/screens/ViewTodoList';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const store = {
+  todosStore
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const Stack = createNativeStackNavigator()
+
+export default class App extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      text: '',
+      desc: '',
+      todos: [],
+    }
+  }
+
+  render() {
+    return (
+      <Provider {...store}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName='home'>
+            <Stack.Screen name='home' options={{ headerShown: false }} component={TodoScreen} />
+            <Stack.Screen name='listTodos' options={{ headerShown: false }} component={ViewTodoList} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    );
+  }
+}
+
